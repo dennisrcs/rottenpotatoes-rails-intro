@@ -11,7 +11,22 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    if params.has_key?(:sort_by)
+      # sorting movies according to sort_by param
+      @movies = Movie.order(params[:sort_by]).all
+
+      # setting hilite class to view's variable
+      if params[:sort_by] == "title"
+        @hilite_title = "hilite"
+        @hilite_release_date = ""
+      else
+        @hilite_title = ""
+        @hilite_release_date = "hilite"
+      end
+
+    else
+      @movies = Movie.all
+    end
   end
 
   def new
