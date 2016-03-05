@@ -11,16 +11,28 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if params.has_key?(:sort_by)
+    @all_ratings = Movie.ratings
+    
+    # fill is_checked hash 
+    if @is_checked == nil
+      @is_checked = Movie.is_checked_init
+    end
+
+    if params.has_key?(:ratings)
+      # update is_checked hash
+      @is_checked = Movie.update_is_checked(params[:ratings])
+      
+      # get keys and filter subset
+      keys = params[:ratings].keys
+      @movies = Movie.where(rating: keys)
+    elsif params.has_key?(:sort_by)
       # sorting movies according to sort_by param
       @movies = Movie.order(params[:sort_by]).all
 
       # setting hilite class to view's variable
       if params[:sort_by] == "title"
         @hilite_title = "hilite"
-        @hilite_release_date = ""
       else
-        @hilite_title = ""
         @hilite_release_date = "hilite"
       end
 
